@@ -3,44 +3,24 @@ import cv2
 import glob, os
 from os.path import splitext
 
-owd = os.getcwd()
+os.chdir("pics")
 
-# Get a reference to webcam #0 (the default one)
-video_capture = cv2.VideoCapture(0)
-
-
-## Prof. Dr. Slim Abdennadher
-os.chdir('pics/ProfSlim')
-
-pics = glob.glob('*.jpg')
+pics = glob.glob("*.jpg")
+# for pic in pics:
+#     print(splitext(pic)[0])
 
 known_face_encodings = []
 known_face_names = []
 
-# Load sample pictures and learn how to recognize it.
-for pic in pics:
-    img = face_recognition.load_image_file(pic)
-    encoding = face_recognition.face_encodings(img)
-    if len(encoding) > 0:
-        img_encoding = face_recognition.face_encodings(img)[0]
-        known_face_encodings.append(img_encoding)
-        known_face_names.append('Prof. Dr. Slim Abdennadher')
-
-
-## Prof. Dr. Ashraf Mansour
-os.chdir(owd)
-os.chdir('pics/ProfAshraf')
-
-pics = glob.glob('*.jpg')
+# Get a reference to webcam #0 (the default one)
+video_capture = cv2.VideoCapture(0)
 
 # Load sample pictures and learn how to recognize it.
 for pic in pics:
     img = face_recognition.load_image_file(pic)
-    encoding = face_recognition.face_encodings(img)
-    if len(encoding) > 0:
-        img_encoding = face_recognition.face_encodings(img)[0]
-        known_face_encodings.append(img_encoding)
-        known_face_names.append('Prof. Dr. Ashraf Mansour')
+    img_encoding = face_recognition.face_encodings(img)[0]
+    known_face_encodings.append(img_encoding)
+    known_face_names.append(splitext(pic)[0])
 
 
 # Initialize some variables
@@ -48,7 +28,6 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
-color = (0, 0, 0)
 
 while True:
     # Grab a single frame of video
@@ -90,21 +69,16 @@ while True:
         bottom *= 4
         left *= 4
 
-        if name == "Unknown":
-            color = (0, 0, 225)
-        else:
-            color = (0, 255, 0)
-
         # Draw a box around the face
-        cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
+        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
         # Draw a label with a name below the face
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), color, cv2.FILLED)
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    cv2.imshow('WhoAmI', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
