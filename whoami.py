@@ -1,13 +1,16 @@
 import face_recognition
 import cv2
 import glob, os
-from os.path import splitext
+import serial
+
+
+ser = serial.Serial('/dev/tty.usbmodem1421', 9600)
+
 
 owd = os.getcwd()
 
 # Get a reference to webcam #0 (the default one)
-video_capture = cv2.VideoCapture(0)
-
+video_capture = cv2.VideoCapture(1)
 
 ## Prof. Dr. Slim Abdennadher
 os.chdir('pics/ProfSlim')
@@ -26,7 +29,6 @@ for pic in pics:
         known_face_encodings.append(img_encoding)
         known_face_names.append('Prof. Dr. Slim Abdennadher')
 
-
 ## Prof. Dr. Ashraf Mansour
 os.chdir(owd)
 os.chdir('pics/ProfAshraf')
@@ -42,11 +44,12 @@ for pic in pics:
         known_face_encodings.append(img_encoding)
         known_face_names.append('Prof. Dr. Ashraf Mansour')
 
-
 # Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
+known_person = False
+isFirstTime = True
 process_this_frame = True
 color = (0, 0, 0)
 
@@ -76,11 +79,11 @@ while True:
             if True in matches:
                 first_match_index = matches.index(True)
                 name = known_face_names[first_match_index]
+                known_person = True
 
             face_names.append(name)
 
     process_this_frame = not process_this_frame
-
 
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -102,6 +105,21 @@ while True:
         cv2.rectangle(frame, (left, bottom - 35), (right, bottom), color, cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+        ## Unlock with Arduino
+        if isFirstTime and known_person:
+            if name == "Unknown":
+                break
+            print('Unlocking for: ' + name)
+            i = 5
+            while i > 0:
+                ser.write(b'1')
+                i -= 1
+                if ser.readline() == b'1\r\n':
+                    known_person = False
+                    isFirstTime = False
+                    break
+
 
     # Display the resulting image
     cv2.imshow('Video', frame)
