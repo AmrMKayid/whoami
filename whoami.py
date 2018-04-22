@@ -2,6 +2,22 @@ import face_recognition
 import cv2
 import glob, os
 import serial
+from multiprocessing import Process
+from threading import  Thread
+import _thread
+from gtts import gTTS
+
+def welcome(name):
+    welcomeMessage = False
+
+    mytext = 'Welcome ' + name
+
+    language = 'en'
+    myobj = gTTS(text=mytext, lang=language, slow=False)
+
+    myobj.save("welcome.mp3")
+    os.system("mpg321 welcome.mp3")
+
 
 
 ser = serial.Serial('/dev/tty.usbmodem1421', 9600)
@@ -50,6 +66,7 @@ face_encodings = []
 face_names = []
 known_person = False
 isFirstTime = True
+welcomeMessage = False
 process_this_frame = True
 color = (0, 0, 0)
 
@@ -98,6 +115,7 @@ while True:
         else:
             color = (0, 255, 0)
 
+
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
 
@@ -110,19 +128,21 @@ while True:
         if isFirstTime and known_person:
             if name == "Unknown":
                 break
-            print('Unlocking for: ' + name)
+            # print('Unlocking for: ' + name)
+            cv2.putText(frame, "Welcome " + name, (left - 100, bottom + 50), font, 1.0, (0, 255, 0), 1)
             i = 5
             while i > 0:
                 ser.write(b'1')
                 i -= 1
                 if ser.readline() == b'1\r\n':
                     known_person = False
-                    isFirstTime = False
+                    # isFirstTime = False
                     break
 
 
+
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    cv2.imshow('WhoAmI', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
