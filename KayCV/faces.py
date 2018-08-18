@@ -16,6 +16,9 @@ while True:
         # Region of Interest
         roi_gray = gray[y:y + h, x:x + w]
         roi_color = frame[y:y + h, x:x + w]
+
+        # Recognizer
+
         img_item = 'my_img.png'
         cv2.imwrite(img_item, roi_color)
 
