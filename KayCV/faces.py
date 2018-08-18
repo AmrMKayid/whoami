@@ -19,6 +19,12 @@ while True:
         img_item = 'my_img.png'
         cv2.imwrite(img_item, roi_color)
 
+        color = (255, 0, 0)  # BGR
+        stroke = 2  # how thick the line should be
+        end_cord_x = x + w
+        end_cord_y = y + h
+        cv2.rectangle(frame, (x, y), (end_cord_x, end_cord_y), color, stroke)
+
         # Display the resulting frame
     cv2.imshow('frame', frame)
     if cv2.waitKey(20) & 0xFF == ord('q'):
