@@ -3,6 +3,9 @@ import cv2
 import pickle
 
 face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
+eye_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_eye.xml')
+smile_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_smile.xml')
+
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read("recognizers/face-trainer.yml")
 
@@ -45,6 +48,11 @@ while True:
         end_cord_x = x + w
         end_cord_y = y + h
         cv2.rectangle(frame, (x, y), (end_cord_x, end_cord_y), color, stroke)
+
+        # # Detecting eyes!
+        # eyes = eye_cascade.detectMultiScale(roi_gray)
+        # for (ex, ey, ew, eh) in eyes:
+        #     cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
 
         # Display the resulting frame
     cv2.imshow('frame', frame)
