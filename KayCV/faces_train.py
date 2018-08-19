@@ -4,7 +4,6 @@ import numpy as np
 import pickle
 from PIL import Image
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 
@@ -15,6 +14,7 @@ current_id = 0
 label_ids = {}
 
 # Loading images
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 image_dir = os.path.join(BASE_DIR, "images")
 
 for root, dirs, files in os.walk(image_dir):
@@ -48,7 +48,7 @@ for root, dirs, files in os.walk(image_dir):
 # print(x_train)
 
 # Using Pickle to Save Label IDs
-with open('labels.pickle', 'wb') as f:
+with open("pickles/face-labels.pickle", 'wb') as f:
     pickle.dump(label_ids, f)
 
 recognizer.train(x_train, np.array(y_labels))
