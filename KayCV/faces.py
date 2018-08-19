@@ -10,7 +10,7 @@ labels = {}
 with open("pickles/face-labels.pickle", 'rb') as f:
     og_labels = pickle.load(f)
     # Inverting it to be (id -> Person_Name)
-    labels = {v:k for k, v in og_labels.items()}
+    labels = {v: k for k, v in og_labels.items()}
 
 cap = cv2.VideoCapture(0)
 
@@ -28,9 +28,14 @@ while True:
 
         # Recognizer
         id_, conf = recognizer.predict(roi_gray)
-        if 35 <= conf <= 85:
-            print(id_)
-            print(labels[id_])
+        if 25 <= conf:
+            # print(id_)
+            # print(labels[id_])
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            name = labels[id_]
+            color = (255, 255, 255)
+            stroke = 2
+            cv2.putText(frame, name, (int((x + w) / 2), y + h - 7), font, 1, color, stroke, cv2.LINE_AA)
 
         # img_item = 'my_img.png'
         # cv2.imwrite(img_item, roi_color)
